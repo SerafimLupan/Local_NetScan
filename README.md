@@ -20,18 +20,18 @@ Install them on Debian/Ubuntu using:
 ##🛠️ Installation & Usage
 
 1. Clone the repository:
-    `
+   ```bahs 
     git clone [https://github.com/SerafimLupan/Local_NetScan.git](https://github.com/SerafimLupan/Local_NetScan.git)
     cd Local_NetScan
-    `
+   
 3. Give execution permissions:
-
-    `chmod +x local_netscan.sh`
+   ```bash
+    chmod +x local_netscan.sh
    
 4. Run with sudo:
- 
-    `sudo ./local_netscan.sh`
-   
+   ```bash
+   sudo ./local_netscan.sh
+      
 ##👤 Author
 
 Lupan "Tirasp0l" Serafim  
