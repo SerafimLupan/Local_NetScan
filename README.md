@@ -23,16 +23,13 @@ Install them on Debian/Ubuntu using:
    ```bahs 
     git clone [https://github.com/SerafimLupan/Local_NetScan.git](https://github.com/SerafimLupan/Local_NetScan.git)
     cd Local_NetScan
-   
 3. Give execution permissions:
    ```bash
     chmod +x local_netscan.sh
-   
 4. Run with sudo:
    ```bash
    sudo ./local_netscan.sh
-      
 ##👤 Author
 
 Lupan "Tirasp0l" Serafim  
-   Website: serafimlupan.com
+   Website: https://serafimlupan.com
