@@ -15,6 +15,7 @@ The tool requires the following packages:
 - `arp-scan`
 
 Install them on Debian/Ubuntu using:
+  ```bash
   `sudo apt update && sudo apt install nmap arp-scan -y`
   
 ## 🛠️ Installation & Usage
