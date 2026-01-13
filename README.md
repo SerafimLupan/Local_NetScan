@@ -17,7 +17,7 @@ The tool requires the following packages:
 Install them on Debian/Ubuntu using:
   `sudo apt update && sudo apt install nmap arp-scan -y`
   
-##🛠️ Installation & Usage
+## 🛠️ Installation & Usage
 
 1. Clone the repository:
    ```bahs 
@@ -29,7 +29,7 @@ Install them on Debian/Ubuntu using:
 4. Run with sudo:
    ```bash
    sudo ./local_netscan.sh
-##👤 Author
+## 👤 Author
 
 Lupan "Tirasp0l" Serafim  
    Website: https://serafimlupan.com
