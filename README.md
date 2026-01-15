@@ -22,7 +22,7 @@ The tool requires the following packages:
 
 1. Clone the repository:
    ```bahs 
-    git clone [https://github.com/SerafimLupan/Local_NetScan.git](https://github.com/SerafimLupan/Local_NetScan.git)
+    git clone https://github.com/SerafimLupan/Local_NetScan.git
     cd Local_NetScan
 3. Give execution permissions:
    ```bash
