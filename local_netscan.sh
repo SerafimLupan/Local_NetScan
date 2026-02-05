@@ -26,17 +26,17 @@ done
 
 # --- Print Custom Banner ---
 clear
-echo -e "${C1}ooooo                                     oooo              ooooo      ooo               .    .oooooo..o                                   ${NC}"
-echo -e "${C2}\`888'                                     \`888              \`888b.     \`8'             .o8   d8P'    \`Y8                                   ${NC}"
-echo -e "${C3} 888          .ooooo.   .ooooo.   .oooo.    888               8 \`88b.    8  .ooooo.  .o888oo Y88bo.        .ooooo.   .oooo.   ooo. .oo.    ${NC}"
-echo -e "${C4} 888         d88' \`88b d88' \`\"Y8 \`P  )88b   888               8   \`88b.  8 d88' \`88b   888    \`\"Y8888o.  d88' \`\"Y8 \`P  )88b  \`888P\"Y88b   ${NC}"
-echo -e "${C5} 888         888   888 888         .oP\"888   888               8      \`88b.8 888ooo888   888        \`\"Y88b 888         .oP\"888   888   888   ${NC}"
-echo -e "${C6} 888       o 888   888 888   .o8 d8(  888   888               8        \`888 888    .o   888 . oo     .d8P 888   .o8 d8(  888   888   888   ${NC}"
+echo -e "${C1}ooooo                                      oooo              ooooo       ooo               .    .oooooo..o                                   ${NC}"
+echo -e "${C2}\`888'                                      \`888              \`888b.      \`8'             .o8   d8P'    \`Y8                                   ${NC}"
+echo -e "${C3} 888          .ooooo.   .ooooo.   .oooo.    888               8 \`88b.     8  .ooooo.  .o888oo Y88bo.        .ooooo.   .oooo.   ooo. .oo.    ${NC}"
+echo -e "${C4} 888         d88' \`88b d88' \`\"Y8 \`P  )88b   888               8   \`88b.   8 d88' \`88b   888    \`\"Y8888o.   d88' \`\"Y8 \`P  )88b  \`888P\"Y88b   ${NC}"
+echo -e "${C5} 888         888   888 888        .oP\"888   888               8      \`88b.8 888ooo888   888        \`\"Y88b  888        .oP\"888   888   888   ${NC}"
+echo -e "${C6} 888       o 888   888 888   .o8 d8(  888   888               8        \`888 888    .o   888  . oo    .d8P  888   .o8 d8(  888   888   888   ${NC}"
 echo -e "${C6}o888ooooood8 \`Y8bod8P' \`Y8bod8P' \`Y888\"\"8o o888o ooooooooooo o8o         \`8  \`Y8bod8P'   \"888\" 8\"\"88888P'  \`Y8bod8P' \`Y888\"\"8o o888o o888o ${NC}"
 echo -e ""
-echo -e "                                 LOCAL_NETSCAN v3.0 - ADVANCED RECON"
-echo -e "                     | by Lupan \"Tirasp0l\" Serafim | more info: serafimlupan.com |"
-echo -e "-----------------------------------------------------------------------------------------------------------------\n"
+echo -e "                                              LOCAL_NETSCAN v3.0 - ADVANCED RECON"
+echo -e "                                 | by Lupan \"Tirasp0l\" Serafim | more info: serafimlupan.com |"
+echo -e "-------------------------------------------------------------------------------------------------------------------------------------------\n"
 
 # --- Interface Selection Phase ---
 
@@ -102,3 +102,4 @@ while true; do
         *) echo "Invalid option." ;;
     esac
 done
+                                                                                                                                                                                                                                             
