@@ -17,7 +17,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # --- Dependency Check ---
-for cmd in arp-scan nmap awk ip; do
+for cmd in arp-scan nmap awk ip tcpdump; do
   if ! command -v $cmd &> /dev/null; then
     echo -e "${C1}[!] Error: $cmd is not installed. Install it with: apt install $cmd${NC}"
     exit 1
@@ -34,85 +34,71 @@ echo -e "${C5} 888         888   888 888         .oP\"888   888               8 
 echo -e "${C6} 888       o 888   888 888   .o8 d8(  888   888               8        \`888 888    .o   888 . oo     .d8P 888   .o8 d8(  888   888   888   ${NC}"
 echo -e "${C6}o888ooooood8 \`Y8bod8P' \`Y8bod8P' \`Y888\"\"8o o888o ooooooooooo o8o         \`8  \`Y8bod8P'   \"888\" 8\"\"88888P'  \`Y8bod8P' \`Y888\"\"8o o888o o888o ${NC}"
 echo -e ""
-echo -e "                   | by Lupan \"Tirasp0l\" Serafim | more info: serafimlupan.com |"
-echo -e "--------------------------------------------------------------------------------------------------------\n"
+echo -e "                                 LOCAL_NETSCAN v3.0 - ADVANCED RECON"
+echo -e "                     | by Lupan \"Tirasp0l\" Serafim | more info: serafimlupan.com |"
+echo -e "-----------------------------------------------------------------------------------------------------------------\n"
 
 # --- Interface Selection Phase ---
-echo -e "${C5}[*] Detecting active network interfaces...${NC}"
 
-# Filter interfaces that are UP and ignore loopback (lo)
 mapfile -t interfaces < <(ip -o link show | awk -F': ' '$3 ~ /UP/ {print $2}' | grep -v "lo")
-
-if [ ${#interfaces[@]} -eq 0 ]; then
-    echo -e "${C1}[!] No active network interfaces found!${NC}"
-    exit 1
-fi
-
-echo -e "${C6}Please select the interface to use:${NC}"
+echo -e "${C5}[*] Select Interface:${NC}"
 select SELECTED_IFACE in "${interfaces[@]}" "Exit"; do
-    if [[ "$SELECTED_IFACE" == "Exit" ]]; then
-        exit 0
-    elif [[ -n "$SELECTED_IFACE" ]]; then
-        # Capture the CIDR subnet for the chosen interface
+    [[ "$SELECTED_IFACE" == "Exit" ]] && exit 0
+    if [[ -n "$SELECTED_IFACE" ]]; then
         TARGET=$(ip -o -f inet addr show "$SELECTED_IFACE" | awk '{print $4}' | head -n 1)
-        
-        if [[ -z "$TARGET" ]]; then
-            echo -e "${C1}[!] No IP address found on $SELECTED_IFACE. Select another.${NC}"
-            continue
-        fi
         break
-    else
-        echo -e "${C1}[!] Invalid choice. Select a number from the list.${NC}"
     fi
 done
 
-# --- Logging Configuration ---
-LOGFILE="scan_${SELECTED_IFACE}_$(date +%Y%m%d_%H%M%S).log"
-echo -e "\n${C4}[+] Selected Interface: $SELECTED_IFACE${NC}"
-echo -e "${C4}[+] Network Subnet:    $TARGET${NC}"
-echo -e "${C4}[+] Session Log:       $LOGFILE${NC}\n"
+LOGFILE="NetScan_${SELECTED_IFACE}_$(date +%H%M).log"
 
-# Silently ensure vendor files are readable for arp-scan
-chmod +r /usr/share/arp-scan/*.txt 2>/dev/null
+# --- Functions ---
 
-# --- Phase 1: Host Discovery ---
-echo -e "${C5}[*] Discovering active hosts on $SELECTED_IFACE...${NC}"
-{
-    echo "=========================================================="
-    echo " DISCOVERY START: $(date)"
-    echo " Target: $TARGET | Interface: $SELECTED_IFACE"
-    echo "=========================================================="
-    echo -e "\n[ARP-SCAN RESULTS]"
-    arp-scan --interface="$SELECTED_IFACE" --localnet --ignoredups
-    echo -e "\n[NMAP PING SWEEP RESULTS]"
-    nmap -sn "$TARGET"
-    echo -e "\n=========================================================="
-    echo " DISCOVERY END: $(date)"
-    echo "=========================================================="
-} | tee "$LOGFILE"
+passive_listen() {
+    echo -e "${C4}[*] Entering Passive Stealth Mode (60s)...${NC}"
+    echo -e "${C2}Listening for ARP and MDNS traffic to identify hosts silently...${NC}"
+    # Ascultă trafic ARP și DNS/MDNS pentru a identifica dispozitivele care "vorbesc" singure
+    timeout 60 tcpdump -i "$SELECTED_IFACE" -n arp or port 5353 2>/dev/null | awk '{print $3 " is active"}' | sort -u
+}
 
-# --- Phase 2: Interactive Port Scanning ---
-echo -e "\n${C6}Would you like to perform a detailed port scan on a specific target? (y/n)${NC}"
-read -r response
+deep_recon() {
+    echo -e "${C5}[*] Running Full Aggressive Recon on $TARGET...${NC}"
+    sudo nmap -A -T4 -p 22,80,443,445,3389,8080 "$TARGET" | tee -a "$LOGFILE"
+}
 
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    echo -e "${C6}Enter the Target IP address:${NC}"
-    read -r scan_ip
-    
-    if [[ -z "$scan_ip" ]]; then
-        echo -e "${C1}[!] Empty input. Skipping detailed scan.${NC}"
-    else
-        echo -e "\n${C4}[*] Starting Service Versioning & Default Scripts on $scan_ip...${NC}"
-        # -sV: Probe open ports to determine service/version info
-        # -sC: Run default nmap scripts (NSE)
-        # -Pn: Skip host discovery (assume host is up)
-        # -T4: Aggressive timing for faster results
-        nmap -sV -sC -Pn -T4 "$scan_ip" | tee -a "$LOGFILE"
-        echo -e "\n${C3}>>> Detailed scan complete. Results logged.${NC}"
-    fi
-else
-    echo -e "\n${C3}>>> Skipping port scan.${NC}"
-fi
+vuln_audit() {
+    echo -e "${C6}Enter Target IP for Vuln Scan:${NC}"
+    read -r t_ip
+    sudo nmap --script vuln -p- -T4 "$t_ip" | tee -a "$LOGFILE"
+}
 
-# --- Wrap up ---
-echo -e "\n${C1}>>> All tasks finished. Review your log at: $LOGFILE${NC}"
+service_hunt() {
+    echo -e "${C6}Enter port to hunt (e.g. 80, 22, 3389):${NC}"
+    read -r port
+    echo -e "${C4}[*] Searching for port $port in the whole network...${NC}"
+    sudo nmap -p "$port" --open "$TARGET" | grep "Nmap scan report"
+}
+
+# --- Main Menu Loop ---
+while true; do
+    echo -e "\n${C3}==== MAIN MENU ====${NC}"
+    echo -e "1) Quick Discovery (ARP)"
+    echo -e "2) Ghost Discovery (No-Ping)"
+    echo -e "3) Deep Recon (OS/Versions)"
+    echo -e "4) Service Hunt (Find specific port)"
+    echo -e "5) Passive Listening (Stealth)"
+    echo -e "6) Vulnerability Audit"
+    echo -e "7) Exit"
+    read -p "Choose option: " opt
+
+    case $opt in
+        1) echo -e "\n[$(date)] ARP Scan" >> "$LOGFILE"; sudo arp-scan --interface="$SELECTED_IFACE" --localnet | tee -a "$LOGFILE" ;;
+        2) sudo nmap -sn -Pn -PS80,443,445 "$TARGET" | tee -a "$LOGFILE" ;;
+        3) deep_recon ;;
+        4) service_hunt ;;
+        5) passive_listen ;;
+        6) vuln_audit ;;
+        7) exit 0 ;;
+        *) echo "Invalid option." ;;
+    esac
+done
